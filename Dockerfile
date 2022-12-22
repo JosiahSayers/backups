@@ -13,4 +13,5 @@ WORKDIR /app
 COPY --from=builder /app/dist /app/dist
 COPY --from=builder /app/package.json /app/package-lock.json /app/
 RUN npm ci
+ENV NODE_ENV production
 CMD ["npm", "start"]
