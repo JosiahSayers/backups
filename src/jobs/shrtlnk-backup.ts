@@ -1,5 +1,7 @@
 import path from 'node:path';
 import { exec } from 'node:child_process';
+import { stat } from 'node:fs/promises';
+import { filesize } from 'filesize';
 import { Environment } from '../utils/environment';
 import { mkdir } from 'node:fs/promises';
 
@@ -13,10 +15,10 @@ export async function shrtlnkBackup() {
     backupFolder,
     backupTitle()
   );
-  return new Promise<void>((res, rej) => {
+  return new Promise((res, rej) => {
     exec(
       `pg_dump ${Environment.shrtlnkDatabaseUrl} -f ${backupFilepath}`,
-      (err, stdout, stderr) => {
+      async (err, stdout, stderr) => {
         if (err) {
           console.error(err);
           rej(err);
@@ -26,7 +28,11 @@ export async function shrtlnkBackup() {
           console.log(stdout);
           console.log(stderr);
         }
-        res();
+        const { size } = await stat(backupFilepath);
+        res({
+          size: filesize(size),
+          file: path.join(backupFolder, backupTitle()),
+        });
       }
     );
   });
