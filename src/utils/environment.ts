@@ -56,6 +56,12 @@ export class Environment {
   static get isProduction() {
     return process.env.NODE_ENV === 'production';
   }
+
+  static get backupRotationLimit() {
+    return process.env.ROTATION_LIMIT
+      ? parseInt(process.env.ROTATION_LIMIT)
+      : null;
+  }
 }
 
 Environment.loadEnv();
